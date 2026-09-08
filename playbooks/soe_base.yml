@@ -1,0 +1,6 @@
+---
+- name: RHEL SOE - Base System Configuration
+  hosts: all
+  become: true
+  roles:
+    - soe_base

@@ -1,0 +1,71 @@
+---
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ soe_base_timezone }}"
+
+- name: Set system locale
+  ansible.builtin.command:
+    cmd: localectl set-locale LANG={{ soe_base_locale }}
+  changed_when: false
+
+# --- NTP (chrony) ---
+- name: Configure chrony (NTP)
+  ansible.builtin.template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart chronyd
+
+- name: Ensure chronyd is running
+  ansible.builtin.service:
+    name: chronyd
+    state: started
+    enabled: true
+
+# --- SELinux ---
+- name: Set SELinux state
+  ansible.posix.selinux:
+    state: "{{ soe_base_selinux_state }}"
+    policy: "{{ soe_base_selinux_policy }}"
+
+# --- Crypto policy ---
+- name: Set crypto policy
+  ansible.builtin.command:
+    cmd: update-crypto-policies --set {{ soe_base_crypto_policy }}
+  register: _crypto_result
+  changed_when: "'already set' not in _crypto_result.stderr"
+
+# --- Banners ---
+- name: Configure MOTD banner
+  ansible.builtin.copy:
+    content: "{{ soe_base_motd_banner }}"
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Configure login banner (/etc/issue)
+  ansible.builtin.copy:
+    content: "{{ soe_base_login_banner }}"
+    dest: /etc/issue
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Configure SSH banner (/etc/banner)
+  ansible.builtin.copy:
+    content: "{{ soe_base_ssh_banner }}"
+    dest: /etc/banner
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ensure sshd Banner directive is set
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?\s*Banner\s'
+    line: "Banner /etc/banner"
+    validate: /usr/sbin/sshd -t -f %s
+  notify: Restart sshd

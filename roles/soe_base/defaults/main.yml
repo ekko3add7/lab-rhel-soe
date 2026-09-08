@@ -1,0 +1,37 @@
+---
+soe_base_environment: staging
+soe_base_organization: "Ekko Lab"
+soe_base_domain: idm.ekko.com
+
+soe_base_timezone: Asia/Taipei
+soe_base_locale: en_US.UTF-8
+
+soe_base_ntp_servers:
+  - time1.google.com
+  - time2.google.com
+
+soe_base_selinux_state: permissive
+soe_base_selinux_policy: targeted
+
+soe_base_crypto_policy: DEFAULT
+
+soe_base_motd_banner: |
+  ============================================================
+    {{ soe_base_organization | default('') }} - {{ soe_base_environment | default('') | upper }}
+    Managed by Ansible Automation Platform
+    Unauthorized access is prohibited.
+  ============================================================
+
+soe_base_login_banner: |
+  ============================================================
+    {{ soe_base_organization | default('') }} - {{ soe_base_environment | default('') | upper }}
+    Unauthorized access is prohibited.
+  ============================================================
+
+soe_base_ssh_banner: |
+  ============================================================
+    {{ soe_base_organization | default('') }} - {{ soe_base_environment | default('') | upper }}
+    WARNING: This system is for authorized use only.
+    All activity may be monitored and recorded.
+    Unauthorized access is strictly prohibited.
+  ============================================================
