@@ -1,0 +1,8 @@
+bk
+*.retry
+*.pyc
+__pycache__/
+.vault_pass
+*.log
+.env
+context/
