@@ -1,0 +1,24 @@
+---
+# users: []
+# - name: admin
+#   groups: [wheel]
+#   ssh_key: "ssh-rsa AAAA..."
+#   state: present
+
+user_groups:
+  - name: spusers
+    state: present
+  - name: devops
+    state: present
+
+user_users:
+  - name: "sp00"
+    groups:
+      - wheel
+      - spusers
+    ssh_key: ""
+    state: "present"
+
+user_sudoers: []
+# - name: devops
+#   sudoer_line: "%devops ALL=(ALL) NOPASSWD: ALL"

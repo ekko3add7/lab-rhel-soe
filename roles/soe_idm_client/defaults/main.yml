@@ -1,0 +1,21 @@
+---
+# ipa or ldap
+idm_provider: "{{ soe_idm_provider }} | default('ipa')"
+idm_server: "{{ soe_idm_server }}"
+idm_domain: "{{ soe_idm_domain }}"
+idm_base_dn: "{{ soe_idm_ldap_base_dn }}"
+
+# --- common ---
+idm_sssd_cache_credentials: true
+
+# --- ldap provider ---
+idm_ca_cert_url: "https://{{ idm_server }}/ipa/config/ca.crt"
+idm_ca_cert_path: /etc/openldap/certs/ipa-ca.crt
+idm_ldap_uri: "ldaps://{{ idm_server }}"
+idm_ldap_backup_uri: ""
+idm_ldap_tls_reqcert: demand
+
+# --- ipa provider ---
+idm_ipa_server: "{{ idm_server }}, _srv_"
+idm_ipa_hostname: "{{ ansible_fqdn }}"
+idm_ipa_ca_cert_path: /etc/ipa/ca.crt

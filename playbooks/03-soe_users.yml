@@ -1,0 +1,14 @@
+---
+- name: RHEL SOE - Local User Management
+  hosts: all
+  become: true
+  roles:
+    - role: soe_users
+      tags: [users]
+
+- name: RHEL SOE - IdM Client Configuration
+  hosts: idm_clients
+  become: true
+  roles:
+    - role: soe_idm_client
+      tags: [idm]

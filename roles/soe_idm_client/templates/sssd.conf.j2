@@ -1,0 +1,74 @@
+{% if idm_provider == 'ipa' %}
+[domain/{{ idm_domain }}]
+id_provider = ipa
+ipa_server = {{ idm_ipa_server }}
+ipa_domain = {{ idm_domain }}
+ipa_hostname = {{ idm_ipa_hostname }}
+auth_provider = ipa
+chpass_provider = ipa
+access_provider = ipa
+cache_credentials = {{ idm_sssd_cache_credentials }}
+ldap_tls_cacert = {{ idm_ipa_ca_cert_path }}
+krb5_store_password_if_offline = True
+
+[sssd]
+services = nss, pam, ssh, sudo
+domains = {{ idm_domain }}
+
+[nss]
+homedir_substring = /home
+
+[pam]
+
+[sudo]
+
+[autofs]
+
+[ssh]
+
+[pac]
+
+[ifp]
+
+[session_recording]
+
+{% elif idm_provider == 'ldap' %}
+[sssd]
+services = nss, pam
+domains = idm_ldap
+config_file_version = 2
+
+[nss]
+filter_groups = root
+filter_users = root
+memcache_timeout = 0
+entry_negative_timeout = 0
+
+[pam]
+
+[domain/idm_ldap]
+id_provider = ldap
+auth_provider = ldap
+chpass_provider = ldap
+
+ldap_uri = {{ idm_ldap_uri }}
+{% if idm_ldap_backup_uri %}
+ldap_backup_uri = {{ idm_ldap_backup_uri }}
+{% endif %}
+ldap_search_base = {{ idm_base_dn }}
+
+ldap_tls_reqcert = {{ idm_ldap_tls_reqcert }}
+ldap_tls_cacert = {{ idm_ca_cert_path }}
+ldap_id_use_start_tls = true
+
+ldap_user_search_base = cn=users,cn=accounts,{{ idm_base_dn }}
+ldap_group_search_base = cn=groups,cn=accounts,{{ idm_base_dn }}
+
+ldap_opt_timeout = 30
+ldap_search_timeout = 30
+ldap_connection_expire_timeout = 0
+
+cache_credentials = {{ idm_sssd_cache_credentials }}
+cached_auth_timeout = 0
+entry_cache_user_timeout = 0
+{% endif %}

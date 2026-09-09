@@ -24,3 +24,9 @@ soe_network_dns_servers:
   - 8.8.4.4
 soe_network_dns_search:
   - "{{ soe_base_domain }}"
+
+# soe_users
+soe_idm_provider: ipa # or ldap
+soe_idm_server: idm-dc-01.idm.ekko.com
+soe_idm_domain: idm.ekko.com
+soe_idm_ldap_base_dn: dc=idm,dc=ekko,dc=com
