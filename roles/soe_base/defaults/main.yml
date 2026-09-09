@@ -1,7 +1,6 @@
 ---
 soe_base_environment: staging
 soe_base_organization: "Ekko Lab"
-soe_base_domain: idm.ekko.com
 
 soe_base_timezone: Asia/Taipei
 soe_base_locale: en_US.UTF-8

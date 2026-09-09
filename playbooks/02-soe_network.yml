@@ -1,0 +1,7 @@
+---
+- name: RHEL SOE - Network Configuration
+  hosts: all
+  become: true
+  roles:
+    - role: soe_network
+      tags: [network]

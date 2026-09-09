@@ -1,0 +1,64 @@
+---
+- name: Disable NetworkManager DNS processing
+  ansible.builtin.copy:
+    dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      # Managed by Ansible
+      [main]
+      dns=none
+  notify: Reload NetworkManager
+
+- name: Apply NetworkManager DNS configuration
+  ansible.builtin.meta: flush_handlers
+
+- name: Read effective NetworkManager configuration
+  ansible.builtin.command:
+    cmd: NetworkManager --print-config
+  register: soe_networkmanager_config
+  changed_when: false
+
+- name: Verify NetworkManager DNS processing is disabled
+  ansible.builtin.assert:
+    that:
+      - soe_networkmanager_config.stdout
+        | regex_search('(?m)^dns\\s*=\\s*none\\s*$')
+        is not none
+    fail_msg: >-
+      NetworkManager dns=none is not effective.
+      Check /etc/NetworkManager/NetworkManager.conf and
+      /etc/NetworkManager/conf.d/*.conf.
+
+- name: Configure manually managed resolv.conf
+  ansible.builtin.template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: yes
+
+- name: Disable IPv6 via sysctl
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: "1"
+    sysctl_set: true
+    state: present
+    reload: true
+    sysctl_file: /etc/sysctl.d/99-soe-ipv6.conf
+  loop:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+  when: network_disable_ipv6
+
+- name: Configure static routes
+  ansible.builtin.command:
+    cmd: >
+      nmcli connection modify "{{ item.interface }}"
+      +ipv4.routes "{{ item.dest }} {{ item.gateway }}"
+  loop: "{{ network_static_routes }}"
+  when: network_static_routes | length > 0
+  changed_when: false
+  notify: Restart NetworkManager

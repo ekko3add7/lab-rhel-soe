@@ -1,8 +1,8 @@
 ---
 # soe_base
+soe_base_domain: ekko.com
 soe_base_environment: staging
 soe_base_organization: "Ekko Lab"
-soe_base_domain: idm.ekko.com
 
 soe_base_timezone: Asia/Taipei
 soe_base_locale: C.UTF-8
@@ -16,10 +16,11 @@ soe_base_selinux_policy: targeted
 
 soe_base_crypto_policy: DEFAULT
 
-#
-soe_dns_servers:
+# soe_network
+soe_network_disable_ipv6: true
+soe_network_dns_servers:
   - 192.168.13.216
   - 8.8.8.8
   - 8.8.4.4
-soe_dns_search_domains:
+soe_network_dns_search:
   - "{{ soe_base_domain }}"

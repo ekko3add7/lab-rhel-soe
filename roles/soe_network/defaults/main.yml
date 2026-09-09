@@ -1,0 +1,10 @@
+---
+network_disable_ipv6: "{{ soe_network_disable_ipv6 | default(false) }}"
+
+network_dns_servers: "{{ soe_network_dns_servers | default(['8.8.8.8', '8.8.4.4']) }}"
+network_dns_search: "{{ soe_network_dns_search | default([]) }}"
+
+network_static_routes: []
+# - dest: 10.0.0.0/8
+#   gateway: 192.168.1.1
+#   interface: eth0

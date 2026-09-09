@@ -1,0 +1,35 @@
+# ==========================================
+# SYSTEM-WIDE CLI COLOR CONFIGURATION
+# ==========================================
+
+# 1. Enable color support for core CLI utilities if the terminal supports it
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+
+    # Aliases to force color output
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+    alias diff='diff --color=auto'
+fi
+
+# 2. Define ANSI Color Codes for easy prompt customization
+# \e[ or \033[ starts the sequence, 01;3Xm sets the color, and \e[0m resets it
+COLOR_USER='\[\e[01;32m\]'      # Bold Green
+COLOR_HOSTNAME='\[\e[01;36m\]'  # Bold Cyan
+COLOR_DIR='\[\e[01;34m\]'       # Bold Blue
+COLOR_RESET='\[\e[00m\]'        # Reset to Default
+
+# Set a fallback red color for the root user to signal high privilege
+if [ "$USER" = "root" ]; then
+    COLOR_USER='\[\e[01;31m\]'  # Bold Red
+fi
+
+# 3. Apply the colored prompt (PS1)
+# Format: [username@hostname directory]$
+PS1="${COLOR_RESET}[${COLOR_USER}\u${COLOR_RESET}@${COLOR_HOSTNAME}\h${COLOR_RESET} ${COLOR_DIR}\w${COLOR_RESET}]\\$ "
+
+# Clean up variables so they don't leak into the user's environment
+unset COLOR_USER COLOR_HOSTNAME COLOR_DIR COLOR_RESET
+
